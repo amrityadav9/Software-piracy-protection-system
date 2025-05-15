@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Software License Registration</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #74ebd5, #9face6);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background-color: #fff;
+      padding: 20px 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 360px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 18px;
+      font-size: 20px;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-size: 14px;
+      color: #333;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="date"],
+    input[type="password"] {
+      width: 100%;
+      padding: 8px;
+      font-size: 13px;
+      margin-top: 4px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    input[readonly] {
+      background-color: #f1f1f1;
+    }
+
+    .error {
+      color: red;
+      font-size: 11px;
+      margin-top: 2px;
+    }
+
+    button {
+      margin-top: 15px;
+      width: 100%;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Software Registration</h2>
+  <form id="regForm" action="RegisterUser" method="post" onsubmit="return validateForm()">
+    <label for="name">Full Name:</label>
+    <input type="text" id="name" name="name" required>
+
+    <label for="dob">Date of Birth:</label>
+    <input type="date" id="dob" name="dob" required>
+
+    <label for="mobile">Mobile Number:</label>
+    <input type="text" id="mobile" name="mobile" required>
+    <div class="error" id="mobileError"></div>
+
+    <label for="email">Gmail Address:</label>
+    <input type="email" id="email" name="email" required>
+    <div class="error" id="emailError"></div>
+
+    <label for="userid">User ID:</label>
+    <input type="text" id="userid" name="userid" required minlength="6" placeholder="User ID">
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required placeholder="Password">
+    <div class="error" id="passwordError"></div>
+
+    <label for="mac">MAC Address:</label>
+    <input type="text" id="mac" name="mac" readonly value="00-14-22-01-23-45">
+
+    <!-- Hidden license key input -->
+    <input type="hidden" id="licenseKey" name="licenseKey">
+
+    <label for="showLicense">Generated License Key:</label>
+    <input type="text" id="showLicense" readonly placeholder="Click Generate">
+
+    <button type="button" onclick="generateLicenseKey()">Generate License Key</button>
+    <button type="submit">Submit Registration</button>
+  </form>
+</div>
+
+<!-- Simple JS MD5 library -->
+<script>
+  function md5cycle(x, k) {
+    let a = x[0], b = x[1], c = x[2], d = x[3];
+    function ff(a, b, c, d, x, s, t) {
+      a += (b & c | ~b & d) + x + t;
+      return ((a << s | a >>> (32 - s)) + b) | 0;
+    }
+    function gg(a, b, c, d, x, s, t) {
+      a += (b & d | c & ~d) + x + t;
+      return ((a << s | a >>> (32 - s)) + b) | 0;
+    }
+    function hh(a, b, c, d, x, s, t) {
+      a += (b ^ c ^ d) + x + t;
+      return ((a << s | a >>> (32 - s)) + b) | 0;
+    }
+    function ii(a, b, c, d, x, s, t) {
+      a += (c ^ (b | ~d)) + x + t;
+      return ((a << s | a >>> (32 - s)) + b) | 0;
+    }
+
+    a = ff(a, b, c, d, k[0], 7, -680876936);
+    d = ff(d, a, b, c, k[1], 12, -389564586);
+    c = ff(c, d, a, b, k[2], 17, 606105819);
+    b = ff(b, c, d, a, k[3], 22, -1044525330);
+    a = gg(a, b, c, d, k[4], 5, -176418897);
+    d = gg(d, a, b, c, k[5], 9, 1200080426);
+    c = gg(c, d, a, b, k[6], 14, -1473231341);
+    b = gg(b, c, d, a, k[7], 20, -45705983);
+    a = hh(a, b, c, d, k[8], 4, 1770035416);
+    d = hh(d, a, b, c, k[9], 11, -1958414417);
+    c = hh(c, d, a, b, k[10], 16, -42063);
+    b = hh(b, c, d, a, k[11], 23, -1990404162);
+    a = ii(a, b, c, d, k[12], 6, 1804603682);
+    d = ii(d, a, b, c, k[13], 10, -40341101);
+    c = ii(c, d, a, b, k[14], 15, -1502002290);
+    b = ii(b, c, d, a, k[15], 21, 1236535329);
+
+    x[0] = (a + x[0]) | 0;
+    x[1] = (b + x[1]) | 0;
+    x[2] = (c + x[2]) | 0;
+    x[3] = (d + x[3]) | 0;
+  }
+
+  function md5blk(s) {
+    const md5blks = [];
+    for (let i = 0; i < 64; i += 4) {
+      md5blks[i >> 2] = s.charCodeAt(i)
+        + (s.charCodeAt(i + 1) << 8)
+        + (s.charCodeAt(i + 2) << 16)
+        + (s.charCodeAt(i + 3) << 24);
+    }
+    return md5blks;
+  }
+
+  function md51(s) {
+    let n = s.length,
+      state = [1732584193, -271733879, -1732584194, 271733878],
+      i;
+    for (i = 64; i <= n; i += 64) {
+      md5cycle(state, md5blk(s.substring(i - 64, i)));
+    }
+    s = s.substring(i - 64);
+    const tail = Array(16).fill(0);
+    for (i = 0; i < s.length; i++) {
+      tail[i >> 2] |= s.charCodeAt(i) << ((i % 4) << 3);
+    }
+    tail[i >> 2] |= 0x80 << ((i % 4) << 3);
+    if (i > 55) {
+      md5cycle(state, tail);
+      tail.fill(0);
+    }
+    tail[14] = n * 8;
+    md5cycle(state, tail);
+    return state;
+  }
+
+  function hex(x) {
+    const hex_chr = '0123456789abcdef';
+    return x.map(n => {
+      let s = '';
+      for (let j = 0; j < 4; j++) {
+        s += hex_chr[(n >> (j * 8 + 4)) & 0x0F] +
+             hex_chr[(n >> (j * 8)) & 0x0F];
+      }
+      return s;
+    }).join('');
+  }
+
+  function md5(s) {
+    return hex(md51(s));
+  }
+
+  function generateLicenseKey() {
+    const userId = document.getElementById("userid").value.trim();
+    const mac = document.getElementById("mac").value.trim();
+    if (!userId) {
+      alert("Please enter User ID.");
+      return;
+    }
+    const input = userId + "-" + mac;
+    const rawHash = md5(input).toUpperCase();
+    const licenseKey = rawHash.substring(0, 16).match(/.{1,4}/g).join("-");
+    document.getElementById("licenseKey").value = licenseKey;
+    document.getElementById("showLicense").value = licenseKey;
+    alert("Generated License Key: " + licenseKey);
+  }
+
+  function validateForm() {
+    const email = document.getElementById("email").value.trim();
+    const mobile = document.getElementById("mobile").value.trim();
+    const emailError = document.getElementById("emailError");
+    const mobileError = document.getElementById("mobileError");
+    const password = document.getElementById("password").value.trim();
+    const passwordError = document.getElementById("passwordError");
+
+    let valid = true;
+    emailError.textContent = "";
+    mobileError.textContent = "";
+    passwordError.textContent = "";
+
+    const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]).{8,}$/;
+
+    if (!regex.test(password)) {
+      passwordError.textContent = "Password must be at least 8 characters and include one uppercase letter, one number, and one special character.";
+      valid = false;
+    }
+
+    if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email)) {
+      emailError.textContent = "Only Gmail addresses are allowed.";
+      valid = false;
+    }
+
+    if (!/^\d{10}$/.test(mobile)) {
+      mobileError.textContent = "Mobile number must be 10 digits.";
+      valid = false;
+    }
+
+    return valid;
+  }
+</script>
+
+</body>
+</html>

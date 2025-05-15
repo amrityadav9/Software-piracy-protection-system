@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign In</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #43cea2, #185a9d);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .login-box {
+      background: white;
+      padding: 25px 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      width: 320px;
+    }
+
+    .login-box h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .login-box input[type="text"],
+    .login-box input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .login-box input[readonly] {
+      background: #f1f1f1;
+    }
+
+    .login-box .error {
+      font-size: 12px;
+      color: red;
+      margin-bottom: 5px;
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 10px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .login-box button:hover {
+      background: #0056b3;
+    }
+
+    .login-box .link {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .login-box .link a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .login-box .link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h2>Sign In</h2>
+
+    <!-- Login Form -->
+    <form id="loginForm">
+      <label>User ID:</label>
+      <input type="text" name="userid" id="userid" placeholder="User ID" required />
+      <div class="error" id="useridError"></div>
+
+      <label>Password:</label>
+      <input type="password" name="password" id="password"  placeholder="Password" required />
+      <div class="error" id="passwordError"></div>
+
+      <label>License Key:</label>
+      <input type="text" name="licenseKey" id="licenseKey" required />
+
+      <label>MAC Address:</label>
+      <input type="text" name="mac" id="mac" readonly />
+
+      <button type="button" onclick="handleLogin()">Login</button>
+    </form>
+
+    <div class="link">
+      New user? <a href="index.html">Sign Up</a>
+    </div>
+  </div>
+
+  <script>
+    // Set dummy MAC address
+    document.getElementById("mac").value = "00-14-22-01-23-45";
+
+    function handleLogin() {
+      const userid = document.getElementById("userid").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const useridError = document.getElementById("useridError");
+      const passwordError = document.getElementById("passwordError");
+
+      let isValid = true;
+      useridError.textContent = "";
+      passwordError.textContent = "";
+
+      if (userid.length < 6) {
+        useridError.textContent = "User ID must be at least 6 characters.";
+        isValid = false;
+      }
+
+      const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]).{8,}$/;
+      if (!passwordRegex.test(password)) {
+        passwordError.textContent = "Password must be 8+ characters with 1 uppercase, 1 number, and 1 special character.";
+        isValid = false;
+      }
+
+      if (!isValid) return;
+
+      // Example logic (replace with real server call)
+      if (userid === "admin" && password === "Admin@123") {
+        window.location.href = "success.html"; // simulate login success
+      } else {
+        // Submit the form to servlet
+        const form = document.getElementById("loginForm");
+        form.setAttribute("method", "post");
+        form.setAttribute("action", "LoginUser");
+        form.submit();
+      }
+    }
+  </script>
+</body>
+</html>
